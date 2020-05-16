@@ -1,0 +1,23 @@
+version: '3.7'
+
+services:
+  master:
+    container_name: master
+    build: ./src/master/
+    restart: unless-stopped
+    volumes:
+      - ./src/master:/master
+    networks:
+      - cluster_network
+  slave:
+    container_name: slave
+    build: ./src/slave/
+    restart: unless-stopped
+    volumes:
+      - ./src/slave:/slave
+    networks: 
+      - cluster_network
+
+networks:
+  cluster_network:
+    driver: bridge

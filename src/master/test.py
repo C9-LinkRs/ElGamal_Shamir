@@ -1,4 +1,4 @@
-from src.libs.ElGamal import ElGamal
+from app.libs.ElGamal import ElGamal
 
 g = ElGamal()
 g.findPrime(55, 4)
