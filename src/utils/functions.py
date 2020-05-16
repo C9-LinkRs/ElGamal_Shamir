@@ -1,5 +1,5 @@
-#Extended Greatest Common Divisor 
-def EGCD(a, b):
+#Euclideant Greatest Common Divisor 
+def GCD(a, b):
   while b != 0:
     c = a%b
     a = b
