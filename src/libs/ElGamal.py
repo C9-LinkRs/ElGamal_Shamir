@@ -1,6 +1,6 @@
 import random
-from utils.functions import modPow
-from utils.millerRabin import millerRabin
+from ..utils.functions import modPow
+from ..utils.millerRabin import millerRabin
 
 """
 Python class for ElGamal implementation
@@ -9,20 +9,22 @@ PS: If you instantiate the class with no params, you have to generate prime p an
 """
 
 class ElGamal:
+  pass
 
-  #Instantiate class only with prime q
-  def __init__(self, q):
-    self.p = 2 * q + 1
+  #Instantiate class
+  def __init__(self):
+    self.p = -1
     self.g = -1
     self.x = -1
     self.y = -1
   
-  #Instantiate class with prime q and generator g
-  def __init__(self, q, g):
+  #Set specific prime number q
+  def setPrime(self, q):
     self.p = 2 * q + 1
+
+  #Set specific generator of Zp*
+  def setGenerator(self, g):
     self.g = g
-    self.x = -1
-    self.y = -1
 
   #Find a proper prime p of numBits bits using Miller-Rabin test with factor of accuracy k
   def findPrime(self, numBits, k):
@@ -51,7 +53,7 @@ class ElGamal:
 
     while True:
       g = random.randint(2, self.p - 2)
-      if modPow(g, (self.p - 1)//primeFactor1) != 1 and modPow(g, (self.p - 1)//primeFactor2) != 1:
+      if modPow(g, (self.p - 1)//primeFactor1, self.p) != 1 and modPow(g, (self.p - 1)//primeFactor2, self.p) != 1:
         self.g = g
         break
 
@@ -76,7 +78,7 @@ class ElGamal:
         "g": self.g,
         "y": self.y
       },
-      "private": x
+      "private": self.x
     }
   
   def encrypt(self, plainText):

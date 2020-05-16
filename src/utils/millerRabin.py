@@ -1,5 +1,5 @@
 import random
-from functions import modPow
+from .functions import modPow
 
 #Source: https://www.geeksforgeeks.org/primality-test-set-3-miller-rabin/
 
