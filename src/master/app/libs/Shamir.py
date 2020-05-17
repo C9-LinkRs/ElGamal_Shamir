@@ -1,11 +1,10 @@
 import random 
 from math import ceil 
-from decimal import *
+from ..utils.functions import egcd
+from ..utils.functions import mod_inverse
 
 
 class Shamir:
-  pass
-  
   def __init__(self, t, n, secret, fieldSize):
       # t = minimum number of shares to reconstruct the secret
       self.t = t
@@ -16,23 +15,26 @@ class Shamir:
       # fieldSize = the size of the field which we will be working
       self.fieldSize = fieldSize
 
-  def reconstructSecret(self, shares): 
-      # Combines shares using Lagranges interpolation.  
-      # Shares is an array of shares being combined 
-      sums, prod_arr = 0, [] 
+  def lagrangeInterpolation(self, shares): 
+      # Calculate Lambdas using Lagrange interpolation.  
+      # Lambda is an array of shares being combined 
+      prod = []
 
       for j in range(len(shares)): 
-          xj, yj = shares[j][0],shares[j][1] 
-          prod = Decimal(1) 
+          xj = shares[j]
+          
+          num = 1
+          den = 1
 
           for i in range(len(shares)): 
-              xi = shares[i][0] 
-              if i != j: prod *= Decimal(Decimal(xi)/(xi-xj)) 
+              xi = shares[i] 
 
-          prod *= yj 
-          sums += Decimal(prod) 
-      self.reconstructedSecret = int(round(Decimal(sums),0)) 
-      return int(round(Decimal(sums),0)) 
+              if (i != j):
+                num = (num * (-xi)) % self.fieldSize
+                den = (den * (xj - xi)) % self.fieldSize
+          prod.append(((num * mod_inverse(den, self.fieldSize)) % self.fieldSize))
+
+      return prod
 
   def generatePool(self):
       # Generate pool to obtain t random shares
@@ -53,10 +55,10 @@ class Shamir:
       for i in range(1,self.n+1): 
           r = random.randrange(1, self.fieldSize) 
           # Evaluates a polynomial in x with coeff being the coefficient list 
-          shares.append([r, sum([r**(len(cfs)-i-1) * cfs[i] for i in range(len(cfs))])]) 
+          shares.append([r, sum([((r**(len(cfs)-i-1))%self.fieldSize * cfs[i])%self.fieldSize for i in range(len(cfs))])]) 
       self.shares = shares
-      return shares
-  
+      return shares 
+
   def getValues(self):
     return {
       "t": self.t,

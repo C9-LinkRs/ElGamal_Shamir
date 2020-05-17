@@ -6,7 +6,7 @@ from app.libs.ElGamal import ElGamal
 from app.libs.Shamir import Shamir
 
 """
-  FOR EDUCATIONAL AND TESTING PURPOSE, PRIVATE KEY IS NOT DELETED FROM
+  FOR EDUCATIONAL AND TESTING PURPOSE, CURRENT PRIVATE KEY IS NOT DELETED FROM
   OBJECT INSTANCES UNTIL SHAMIR RECONSTRUCTION FUNCTION IS CALLED
 """
 
@@ -16,7 +16,7 @@ app.register_blueprint(controller.main_blueprint)
 
 #Init ElGamal values
 currentGamal = ElGamal()
-currentGamal.findPrime(55, 4)
+currentGamal.findPrime(42, 4)
 currentGamal.findGenerator()
 currentGamal.generatePrivateKey()
 currentGamal.generatePublicKey()
@@ -35,7 +35,7 @@ sharesSecret = currentShamir.generateShares()
 
 #Send share pair to slaves
 for i in range(n):
-  body = { "key": sharesSecret[i] }
+  body = { "pair": { "x": sharesSecret[i][0], "y": sharesSecret[i][1] }, "p": elGamal_values["public"]["p"] }
   r = requests.post("http://elgamal_shamir_slave_{}:5001/init".format(i+1), json=body)
 
 #Setting master controller class variable 'currentShamir' current Shamir object instance

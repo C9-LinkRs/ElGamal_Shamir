@@ -1,6 +1,5 @@
 import random
-import json
-from ..utils.functions import modPow
+from ..utils.functions import modPow, mod_inverse
 from ..utils.millerRabin import millerRabin
 
 """
@@ -24,8 +23,8 @@ class ElGamal:
     self.p = 2 * q + 1
 
   #Set current gamal instance prime p with obtained from shamir reconstruction
-  def setPrimeFromShamir(self, p):
-    self.p = p
+  def setPrivateKeyFromShamir(self, x):
+    self.x = x
 
   #Set specific generator of Zp*
   def setGenerator(self, g):
@@ -95,3 +94,12 @@ class ElGamal:
       "c1": c1,
       "c2": c2
     }
+  
+  def decrypt(self, pair):
+    w = 1
+    print(pair)
+    for i in range(len(pair["lambda"])):
+      w = (w * modPow(pair["c1y"][i], pair["lambda"][i], self.p)) % self.p
+    w_inverse = mod_inverse(w, self.p)
+    asciiText = (pair["c2"] * w_inverse) % self.p
+    return asciiText
