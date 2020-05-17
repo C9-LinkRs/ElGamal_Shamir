@@ -70,3 +70,6 @@ class Shamir:
       "secret": self.secret,
       "fieldSize": self.fieldSize
     }
+  
+  def deletePrivateKey(self):
+    self.secret = "hidden"

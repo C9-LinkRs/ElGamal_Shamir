@@ -27,6 +27,9 @@ class ElGamal:
   def setPrivateKeyFromShamir(self, x):
     self.x = x
 
+  def deletePrivateKey(self):
+    self.x = "hidden"
+
   #Set specific generator of Zp*
   def setGenerator(self, g):
     self.g = g

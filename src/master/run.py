@@ -22,9 +22,6 @@ currentGamal.generatePrivateKey()
 currentGamal.generatePublicKey()
 elGamal_values = currentGamal.getKeys()
 
-#Setting master controller class variable 'currentGamal' current ElGamal object instance
-controller.currentGamal = currentGamal
-
 #Init Shamir secret sharing
 t = 3 #Minimum keys to use to reconstruct
 n = 6 #Number of slaves
@@ -38,8 +35,15 @@ for i in range(n):
   body = { "pair": { "x": sharesSecret[i][0], "y": sharesSecret[i][1] }, "p": elGamal_values["public"]["p"] }
   r = requests.post("http://elgamal_shamir_slave_{}:5001/init".format(i+1), json=body)
 
+#Deleting private key from master server
+currentGamal.deletePrivateKey()
+currentShamir.deletePrivateKey()
+
 #Setting master controller class variable 'currentShamir' current Shamir object instance
 controller.currentShamir = currentShamir
+
+#Setting master controller class variable 'currentGamal' current ElGamal object instance
+controller.currentGamal = currentGamal
 
 if __name__ == "__main__":
   app.run(host="0.0.0.0", port=5001, debug=False)
