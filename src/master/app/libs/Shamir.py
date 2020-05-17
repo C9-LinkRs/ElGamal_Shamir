@@ -55,4 +55,12 @@ class Shamir:
           # Evaluates a polynomial in x with coeff being the coefficient list 
           shares.append([r, sum([r**(len(cfs)-i-1) * cfs[i] for i in range(len(cfs))])]) 
       self.shares = shares
-      return shares 
+      return shares
+  
+  def getValues(self):
+    return {
+      "t": self.t,
+      "n": self.n,
+      "secret": self.secret,
+      "fieldSize": self.fieldSize
+    }

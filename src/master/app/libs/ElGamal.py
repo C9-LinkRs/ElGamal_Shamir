@@ -1,4 +1,5 @@
 import random
+import json
 from ..utils.functions import modPow
 from ..utils.millerRabin import millerRabin
 
@@ -21,6 +22,10 @@ class ElGamal:
   #Set specific prime number q
   def setPrime(self, q):
     self.p = 2 * q + 1
+
+  #Set current gamal instance prime p with obtained from shamir reconstruction
+  def setPrimeFromShamir(self, p):
+    self.p = p
 
   #Set specific generator of Zp*
   def setGenerator(self, g):

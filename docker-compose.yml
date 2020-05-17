@@ -4,17 +4,33 @@ services:
   master:
     container_name: master
     build: ./src/master/
-    restart: unless-stopped
+    restart: always
+    depends_on:
+      - slave
     volumes:
       - ./src/master:/master
+    ports:
+      - 5001:5001
     networks:
       - cluster_network
   slave:
-    container_name: slave
     build: ./src/slave/
-    restart: unless-stopped
+    restart: always
     volumes:
       - ./src/slave:/slave
+    ports:
+      - 5002-5004:5001
+    networks: 
+      - cluster_network
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    depends_on:
+      - master
+    volumes:
+      - ./src/config/nginx.conf:/etc/nginx.conf.d/default.conf
+    ports:
+      - 80:80
     networks: 
       - cluster_network
 

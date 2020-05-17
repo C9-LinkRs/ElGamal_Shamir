@@ -6,3 +6,5 @@
 __pychache__
 
 *.pyc
+*.json
+notes.txt
