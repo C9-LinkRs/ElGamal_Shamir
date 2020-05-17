@@ -22,7 +22,7 @@ currentGamal.generatePrivateKey()
 currentGamal.generatePublicKey()
 elGamal_values = currentGamal.getKeys()
 
-#Init Shamir secret sharing
+#Init Shamir secret sharing 
 t = 3 #Minimum keys to use to reconstruct
 n = 6 #Number of slaves
 secret = elGamal_values["private"]

@@ -47,8 +47,7 @@ class Shamir:
   def generateShares(self): 
       # Randomly generate a coefficient 
       # array for a polynomial with degree t-1 whose constant (alpha) = secret
-      #coeff = [random.randrange(0, self.fieldSize) for _ in range(self.t-1)] 
-      coeff = [111, 58]
+      coeff = [random.randrange(0, self.fieldSize) for _ in range(self.t-1)] 
       coeff.append(self.secret) 
 
       # Split secret using Shamir's Secret Sharing into n shares with threshold t
