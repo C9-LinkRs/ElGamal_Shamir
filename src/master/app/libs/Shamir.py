@@ -18,23 +18,24 @@ class Shamir:
   def lagrangeInterpolation(self, shares): 
       # Calculate Lambdas using Lagrange interpolation.  
       # Lambda is an array of shares being combined 
-      prod = []
-
-      for j in range(len(shares)): 
-          xj = shares[j]
+      sums = 0
+      for j in range(len(shares["x"])): 
+          xj = shares["x"][j]
+          yj = shares["y"][j]
           
           num = 1
           den = 1
+          prod = 1
 
-          for i in range(len(shares)): 
-              xi = shares[i] 
+          for i in range(len(shares["x"])): 
+              xi = shares["x"][i]
 
               if (i != j):
-                num = (num * (-xi)) % self.fieldSize
-                den = (den * (xj - xi)) % self.fieldSize
-          prod.append(((num * mod_inverse(den, self.fieldSize)) % self.fieldSize))
-
-      return prod
+                num = (num * ((-xi) % self.fieldSize) ) % self.fieldSize
+                den = (den * ((xj - xi) % self.fieldSize)) % self.fieldSize
+          prod = (num * mod_inverse(den, self.fieldSize)) % self.fieldSize
+          sums = (self.fieldSize + sums + (yj * prod)) % self.fieldSize
+      return sums
 
   def generatePool(self):
       # Generate pool to obtain t random shares
@@ -46,16 +47,19 @@ class Shamir:
   def generateShares(self): 
       # Randomly generate a coefficient 
       # array for a polynomial with degree t-1 whose constant (alpha) = secret
-      coeff = [random.randrange(0, self.fieldSize) for _ in range(self.t-1)] 
+      #coeff = [random.randrange(0, self.fieldSize) for _ in range(self.t-1)] 
+      coeff = [111, 58]
       coeff.append(self.secret) 
 
       # Split secret using Shamir's Secret Sharing into n shares with threshold t
       cfs = coeff
+      print("shamir coeff {}".format(cfs))
       shares = [] 
-      for i in range(1,self.n+1): 
-          r = random.randrange(1, self.fieldSize) 
+      for i in range(1,self.n+1):
+          r = i
+          #r = random.randrange(1, self.fieldSize) 
           # Evaluates a polynomial in x with coeff being the coefficient list 
-          shares.append([r, sum([((r**(len(cfs)-i-1))%self.fieldSize * cfs[i])%self.fieldSize for i in range(len(cfs))])]) 
+          shares.append([r, sum([((r**(len(cfs)-i-1))%self.fieldSize * cfs[i])%self.fieldSize for i in range(len(cfs))]) % self.fieldSize ]) 
       self.shares = shares
       return shares 
 

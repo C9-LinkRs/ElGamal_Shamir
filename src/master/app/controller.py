@@ -1,4 +1,5 @@
 import json
+import random
 import requests
 from flask import Blueprint, jsonify, request
 from .libs.ElGamal import ElGamal
@@ -33,28 +34,35 @@ def decrypt():
   params = request.get_json()
   pairs = params["encryptedMessage"]
 
-  #Calculate pair (x, c1^y) from slaves for every encrypted pairs
+  #Shamir instance values
   shamirValues = currentShamir.getValues()
+
+  #Pick t random slaves servers
+  randomServers = random.sample(range(1, shamirValues["n"]), shamirValues["t"])
+  
+  #Calculate pair (x, c1^y) from slaves for every encrypted pairs
+  
   partialDecrypt = []
   for pair in pairs:
     slaveX = []
-    slaveC1Y = []
-    for i in range(shamirValues["t"]):
+    slaveY=[]
+    for slave in randomServers:
       body = { "c1": pair["c1"] }
-      r = requests.post("http://elgamal_shamir_slave_{}:5001/return".format(i+1), json=body)
+      r = requests.get("http://elgamal_shamir_slave_{}:5001/return".format(slave), json=body)
       
       response = r.json()
-      print(response)
+      
       slaveX.append(response["partialDecrypt"]["x"])
-      slaveC1Y.append(response["partialDecrypt"]["c1y"])
-    partialDecrypt.append({ "x": slaveX, "c1y": slaveC1Y, "c2": pair["c2"] })
-
+      slaveY.append(response["partialDecrypt"]["y"])
+      
+    partialDecrypt.append({ "x": slaveX, "y":slaveY, "c1": pair["c1"], "c2": pair["c2"] })
+  
   #Decrypt encrypted message
-  decryptedMessage = []
-  lambdas = currentShamir.lagrangeInterpolation(partialDecrypt[0]["x"])
+  decryptedMessage = ""
+  secret = currentShamir.lagrangeInterpolation(partialDecrypt[0])
   for pair in partialDecrypt:
-    decryptPair = { "lambda": lambdas, "c1y": pair["c1y"], "c2": pair["c2"] }
+    decryptPair = { "secret": secret, "c1": pair["c1"], "c2": pair["c2"] }
     plainText = currentGamal.decrypt(decryptPair)
-    decryptedMessage.append(plainText)
+    decryptedMessage+=plainText
 
-  return jsonify({ "decryptedMessage": decryptedMessage })
+  return jsonify({ "decryptedMessage": decryptedMessage, "randomServers": randomServers })

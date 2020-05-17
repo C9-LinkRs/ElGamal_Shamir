@@ -10,7 +10,7 @@ p = -1
 
 @main_blueprint.route("/")
 def index():
-  return jsonify({ "message": "Slave server's up!", "p":p }), 200
+  return jsonify({ "message": "Slave server's up!", "p":p, "x": shamirPair["x"], "y": shamirPair["y"] }), 200
 
 
 @main_blueprint.route("/init", methods=["POST"])
@@ -24,13 +24,10 @@ def initSlave():
   return jsonify({ "pair": shamirPair, "p": p }), 200
 
 
-@main_blueprint.route("/return", methods=["POST"])
+@main_blueprint.route("/return")
 def returnKey():
   global shamirPair
-  global p
 
-  params = request.get_json()
-  c1 = params["c1"]
-  partialDecrypt = { "x": shamirPair["x"], "c1y": modPow(c1, shamirPair["y"], p), "y": shamirPair["y"], "c1": c1, "p":p }
+  partialDecrypt = { "x": shamirPair["x"], "y": shamirPair["y"] }
   
   return jsonify({ "partialDecrypt": partialDecrypt }), 200

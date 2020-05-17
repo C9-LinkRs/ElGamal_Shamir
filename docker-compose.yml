@@ -19,7 +19,7 @@ services:
     volumes:
       - ./src/slave:/slave
     ports:
-      - 5002-5004:5001
+      - 5002-5007:5001
     networks: 
       - cluster_network
   nginx:

@@ -20,7 +20,8 @@ class ElGamal:
   
   #Set specific prime number q
   def setPrime(self, q):
-    self.p = 2 * q + 1
+    #self.p = 2 * q + 1
+    self.p = q
 
   #Set current gamal instance prime p with obtained from shamir reconstruction
   def setPrivateKeyFromShamir(self, x):
@@ -96,10 +97,6 @@ class ElGamal:
     }
   
   def decrypt(self, pair):
-    w = 1
-    print(pair)
-    for i in range(len(pair["lambda"])):
-      w = (w * modPow(pair["c1y"][i], pair["lambda"][i], self.p)) % self.p
-    w_inverse = mod_inverse(w, self.p)
-    asciiText = (pair["c2"] * w_inverse) % self.p
-    return asciiText
+    c1_inverse = mod_inverse(modPow(pair["c1"], pair["secret"], self.p), self.p)
+    asciiText = (pair["c2"] * c1_inverse) % self.p
+    return chr(asciiText)

@@ -16,7 +16,7 @@ app.register_blueprint(controller.main_blueprint)
 
 #Init ElGamal values
 currentGamal = ElGamal()
-currentGamal.findPrime(42, 4)
+currentGamal.findPrime(50, 5)
 currentGamal.findGenerator()
 currentGamal.generatePrivateKey()
 currentGamal.generatePublicKey()
@@ -27,7 +27,7 @@ controller.currentGamal = currentGamal
 
 #Init Shamir secret sharing
 t = 3 #Minimum keys to use to reconstruct
-n = 3 #Number of slaves
+n = 6 #Number of slaves
 secret = elGamal_values["private"]
 fieldSize = elGamal_values["public"]["p"]
 currentShamir = Shamir(t, n, secret, fieldSize)
@@ -42,4 +42,4 @@ for i in range(n):
 controller.currentShamir = currentShamir
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=5001, debug=True)
+  app.run(host="0.0.0.0", port=5001, debug=False)
